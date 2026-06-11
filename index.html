@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="app-icon.svg">
+  <title>Funlet</title>
+  <meta name="description" content="Funlet is a growing collection of mini games. No ads, no chat, no Wi-Fi needed." />
+  <style>
+    :root {
+      --primary:          #3EB489;
+      --secondary:        #E87461;
+      --bg:               #0D1B2A;
+      --surface:          #132233;
+      --surface2:         #1a2d40;
+      --text:             #e8f4f0;
+      --muted:            rgba(232, 244, 240, 0.5);
+      --border:           rgba(62, 180, 137, 0.18);
+      --border-hover:     rgba(62, 180, 137, 0.4);
+      --primary-subtle:   rgba(62, 180, 137, 0.08);
+      --primary-border:   rgba(62, 180, 137, 0.35);
+      --secondary-subtle: rgba(232, 116, 97, 0.08);
+      --secondary-border: rgba(232, 116, 97, 0.35);
+      --text-subtle:      rgba(232, 244, 240, 0.05);
+      --text-border:      rgba(232, 244, 240, 0.15);
+      --nav-bg:           rgba(13, 27, 42, 0.85);
+
+      /* Game icon gradients */
+      --game-general-grad:   linear-gradient(145deg, #0D1B2A, #1a2d40);
+      --game-math-grad:   linear-gradient(145deg, #f97316, #ef4444);
+      --game-recall-grad: linear-gradient(145deg, #ec4899, #f43f5e);
+      --game-wyr-grad:    linear-gradient(145deg, #0ea5e9, #06b6d4);
+      --game-bubble-grad: linear-gradient(145deg, #7c3aed, #a855f7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 72px 0; }
+
+    section + section {
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon { width: 28px; height: 28px; }
+
+    .nav-logo-text {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    #hero {
+      padding: 96px 0 80px;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      margin-bottom: 20px;
+      padding: 4px 12px;
+      border: 1px solid var(--secondary-border);
+      border-radius: 100px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 8vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: 1px solid;
+    }
+
+    .badge-primary {
+      color: var(--primary);
+      border-color: var(--primary-border);
+      background: var(--primary-subtle);
+    }
+
+    .badge-secondary {
+      color: var(--secondary);
+      border-color: var(--secondary-border);
+      background: var(--secondary-subtle);
+    }
+
+    .badge-neutral {
+      color: var(--muted);
+      border-color: var(--text-border);
+      background: var(--text-subtle);
+    }
+
+    .app-store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .app-store-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .app-store-btn svg { flex-shrink: 0; }
+
+    /* ── Section headers ── */
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 32px;
+      line-height: 1.2;
+    }
+
+    /* ── Games ── */
+    .games-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .game-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: border-color 0.15s;
+    }
+
+    .game-card:hover { border-color: var(--border-hover); }
+
+    .game-card--coming { opacity: 0.7; }
+
+    .game-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .game-icon--general { background: var(--surface2); }
+    .game-icon--math    { background: var(--game-math-grad); }
+    .game-icon--recall  { background: var(--game-recall-grad); }
+    .game-icon--wyr     { background: var(--game-wyr-grad); }
+    .game-icon--bubble  { background: var(--game-bubble-grad); }
+
+    .game-body { flex: 1; min-width: 0; }
+
+    .game-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .game-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .game-coming {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      border: 1px solid var(--secondary-border);
+      border-radius: 100px;
+      padding: 2px 8px;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    /* ── Support ── */
+    .support-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .support-card p {
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .support-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border-bottom: 1px solid var(--primary-border);
+      padding-bottom: 2px;
+      transition: opacity 0.15s;
+    }
+
+    .support-email:hover { opacity: 0.75; }
+
+    /* ── Privacy ── */
+    .privacy-block {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.75;
+    }
+
+    .privacy-block h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin: 24px 0 8px;
+    }
+
+    .privacy-block h3:first-child { margin-top: 0; }
+
+    .privacy-block p { margin-bottom: 12px; }
+
+    .privacy-block a {
+      color: var(--primary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--primary-border);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--text); }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      section { padding: 56px 0; }
+      #hero { padding: 72px 0 56px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="app-icon.svg" class="nav-logo-icon" alt="funlet logo">
+        <span class="nav-logo-text">funlet</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#games">Games</a></li>
+        <li><a href="#support">Support</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Now available on the App Store</div>
+      <h1 class="hero-title">Just pick a game<br><span class="accent">and play.</span></h1>
+      <p class="hero-sub">A growing collection of mini games. No ads, no chat, no Wi-Fi needed.</p>
+
+      <div class="hero-badges">
+        <span class="badge badge-primary">No ads</span>
+        <span class="badge badge-secondary">Fully offline</span>
+        <span class="badge badge-neutral">No chat</span>
+        <span class="badge badge-neutral">Free to play</span>
+      </div>
+
+      <a href="#" class="app-store-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        Download on the App Store
+      </a>
+    </div>
+  </section>
+
+  <!-- Games -->
+  <section id="games">
+    <div class="container">
+      <div class="section-label">Games</div>
+      <h2 class="section-title">Something for everyone</h2>
+
+      <div class="games-grid">
+
+        <div class="game-card">
+          <div class="game-icon game-icon--general">🧮</div>
+          <div class="game-body">
+            <div class="game-title">Math Practice</div>
+            <div class="game-desc">Addition, subtraction, counting, multiplication and division with level progression.</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon game-icon--general">🧠</div>
+          <div class="game-body">
+            <div class="game-title">Memory Recall</div>
+            <div class="game-desc">Card matching that gets progressively harder, more cards, shorter previews, and tougher icon sets as you advance.</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon game-icon--general">🤔</div>
+          <div class="game-body">
+            <div class="game-title">Would You Rather</div>
+            <div class="game-desc">Lighthearted choices across jobs, superpowers, vacations, and more. Great for groups.</div>
+          </div>
+        </div>
+
+        <div class="game-card game-card--coming">
+          <div class="game-icon game-icon--general">🫧</div>
+          <div class="game-body">
+            <div class="game-title">Bubble Pop</div>
+            <div class="game-desc">Sharpen your reflexes with rapid-fire bubble popping and streak bonuses.</div>
+            <span class="game-coming">Planned</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Support -->
+  <section id="support">
+    <div class="container">
+      <div class="section-label">Support</div>
+      <h2 class="section-title">We're here to help</h2>
+
+      <div class="support-card">
+        <p>Have a question, found a bug, or want to share feedback? Send us an email and we'll get back to you as soon as we can.</p>
+        <a href="mailto:support@funlet.fun" class="support-email">support@funlet.fun</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section id="privacy">
+    <div class="container">
+      <div class="section-label">Privacy Policy</div>
+      <h2 class="section-title">Your data stays on your device</h2>
+
+      <div class="privacy-block">
+
+        <h3>Overview</h3>
+        <p>Funlet is designed to work fully offline. Your game progress, settings, and scores are stored locally on your device and are never transmitted to any server.</p>
+
+        <h3>What we collect</h3>
+        <p>Funlet does not collect any personal information. We do not require account creation, and we do not ask for your name, email, or any identifying details.</p>
+        <p>App Store analytics (such as download counts and crash reports) may be collected by Apple as part of the standard App Store experience. This data is governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</p>
+
+        <h3>Data storage</h3>
+        <p>All app data including game progress, scores, and settings is stored locally on your device using standard browser storage. Uninstalling the app removes this data entirely.</p>
+
+        <h3>Third parties</h3>
+        <p>Funlet does not integrate any third-party advertising, analytics, or tracking SDKs.</p>
+
+        <h3>Children</h3>
+        <p>Funlet does not knowingly collect any information from anyone, including children. The app contains no accounts, no chat, and no network communication.</p>
+
+        <h3>Contact</h3>
+        <p>Questions about this policy? Email us at <a href="mailto:support@funlet.fun">support@funlet.fun</a>.</p>
+
+        <h3>Last updated</h3>
+        <p>June 2026</p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Funlet &nbsp;·&nbsp; <a href="#privacy">Privacy Policy</a> &nbsp;·&nbsp; <a href="#support">Support</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
